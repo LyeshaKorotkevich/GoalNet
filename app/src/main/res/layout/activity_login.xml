@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textViewTitleL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:text="Authorization"
+        android:textSize="34sp" />
+
+    <EditText
+        android:id="@+id/editTextUsernameL"
+        android:layout_width="253dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewTitleL"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:hint="username"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/editTextPasswordL"
+        android:layout_width="247dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextUsernameL"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"
+        android:hint="password"
+        android:inputType="textPassword"
+        android:textSize="25sp" />
+
+    <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="266dp"
+        android:layout_height="98dp"
+        android:layout_below="@id/editTextPasswordL"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:textSize="25sp"
+        android:backgroundTint="@color/green"
+        android:text="Log in"
+        android:onClick="loginUser"/>
+
+    <TextView
+        android:id="@+id/textViewRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonLogin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:minHeight="48dp"
+        android:onClick="openRegistrationActivity"
+        android:text="Create an account"
+        android:textSize="18dp"
+        android:textColor="#007bff" />
+
+</RelativeLayout>

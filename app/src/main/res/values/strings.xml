@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">GoalNet</string>
+    <string name="goalnet">GoalNet</string>
+    <string name="username">Username</string>
+    <string name="post">Post</string>
+    <string name="create_post">Create Post</string>
+    <string name="title">Title</string>
+    <string name="content">Content</string>
+</resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textViewTitleReg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:text="Registration"
+        android:textSize="34sp" />
+
+    <EditText
+        android:id="@+id/editTextUsernameReg"
+        android:layout_width="258dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewTitleReg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:hint="username"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/editTextPasswordReg"
+        android:layout_width="264dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextUsernameReg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"
+        android:hint="password"
+        android:inputType="textPassword"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/editTextConfirmPasswordReg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPasswordReg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:textSize="25sp"
+        android:hint="confirm your password"
+        android:inputType="textPassword"/>
+
+    <Button
+        android:id="@+id/buttonReg"
+        android:layout_width="266dp"
+        android:layout_height="98dp"
+        android:layout_below="@id/editTextPasswordReg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:textSize="25sp"
+        android:backgroundTint="@color/green"
+        android:text="Sign up" />
+
+</RelativeLayout>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/topNavigationAnotherProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/textViewTitleAnotherProfile"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="6sp"
+            android:layout_weight="1"
+            android:text="@string/goalnet"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="68dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/imageLogoutAnotherP"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/logout" />
+
+            <Space
+                android:layout_width="48dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/textNavUsernameAnotherProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6sp"
+                android:text="@string/username"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/imageNavAvatarAnotherProfile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/default_avatar" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topNavigationAnotherProfile"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/imageViewAvatarAnotherProfile"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/default_avatar" />
+
+        <TextView
+            android:id="@+id/textViewNameAnotherProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Username"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textViewInfoAnotherProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Information about the user"
+            android:layout_marginTop="10sp"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewCountryAnotherProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Country"
+            android:layout_marginTop="10sp"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewCityAnotherProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="City"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="10sp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewBirthdayAnotherProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Birthday"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="10sp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewClubAnotherProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Favorite club"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="10sp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewPlayerAnotherProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Favorite player"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="10sp"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>
