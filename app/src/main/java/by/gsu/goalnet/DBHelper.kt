@@ -25,6 +25,7 @@ data class Post(
     var title: String,
     var content: String,
     var userId: Int,
+    var tagId: Int,
     var createdAt: String,
     var updatedAt: String,
     var commentCount: Int = 0
@@ -36,6 +37,11 @@ data class Comment(
     var postId: Int,
     var userId: Int,
     var createdAt: String
+)
+
+data class Tag(
+    var id: Int = -1,
+    var name: String
 )
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -78,6 +84,11 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         private const val KEY_COMMENT_POST_ID = "post_id"
         private const val KEY_COMMENT_USER_ID = "user_id"
         private const val KEY_COMMENT_CREATED_AT = "createdAt"
+
+        private const val TABLE_TAGS = "tags"
+        private const val KEY_TAG_ID = "id"
+        private const val KEY_TAG_NAME = "name"
+        private const val KEY_POST_TAG_ID = "tag_id"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -88,6 +99,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
         db?.execSQL(CREATE_USERS_TABLE)
 
+        val CREATE_TAGS_TABLE = ("CREATE TABLE $TABLE_TAGS " +
+                "($KEY_TAG_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "$KEY_TAG_NAME TEXT NOT NULL)")
+
+        db?.execSQL(CREATE_TAGS_TABLE)
+
         val CREATE_POSTS_TABLE = ("CREATE TABLE $TABLE_POSTS " +
                 "($KEY_POST_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$KEY_POST_TITLE TEXT NOT NULL, " +
@@ -95,7 +112,9 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 "$KEY_POST_USER_ID INTEGER NOT NULL, " +
                 "$KEY_POST_CREATED_AT TEXT NOT NULL, " +
                 "$KEY_POST_UPDATED_AT TEXT NOT NULL, " +
-                "FOREIGN KEY ($KEY_POST_USER_ID) REFERENCES $TABLE_USERS($KEY_ID))")
+                "$KEY_POST_TAG_ID INTEGER NOT NULL, " +
+                "FOREIGN KEY ($KEY_POST_USER_ID) REFERENCES $TABLE_USERS($KEY_ID))" +
+                "FOREIGN KEY ($KEY_POST_TAG_ID) REFERENCES $TABLE_TAGS($KEY_TAG_ID))")
 
         db?.execSQL(CREATE_POSTS_TABLE)
 
@@ -142,6 +161,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_COMMENTS")
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_ROLES")
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_USER_ROLES")
+        db?.execSQL("DROP TABLE IF EXISTS $TABLE_TAGS")
 
         onCreate(db)
     }
@@ -241,42 +261,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             null
         }
     }
-    @SuppressLint("Range")
-    fun getPostByTitle(postTitle: String): Post? {
-        val db = this.readableDatabase
-        val cursor: Cursor = db.query(
-            TABLE_POSTS,
-            arrayOf(
-                KEY_POST_ID,
-                KEY_POST_TITLE,
-                KEY_POST_CONTENT,
-                KEY_POST_USER_ID,
-                KEY_POST_CREATED_AT,
-                KEY_POST_UPDATED_AT,
-            ),
-            "$KEY_POST_TITLE=?",
-            arrayOf(postTitle),
-            null,
-            null,
-            null,
-            null
-        )
-        return if (cursor.moveToFirst()) {
-            val post = Post(
-                cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
-                cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
-                cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
-                cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
-                cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
-                cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
-            )
-            cursor.close()
-            post
-        } else {
-            null
-        }
-    }
 
+    @SuppressLint("Range")
     fun getPostsByTitle(postTitle: String): List<Post> {
         val db = this.readableDatabase
         val posts = mutableListOf<Post>()
@@ -287,6 +273,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 KEY_POST_TITLE,
                 KEY_POST_CONTENT,
                 KEY_POST_USER_ID,
+                KEY_POST_TAG_ID,
                 KEY_POST_CREATED_AT,
                 KEY_POST_UPDATED_AT,
             ),
@@ -305,6 +292,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
                     cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
                     cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
                     cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
                     cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
                 )
@@ -325,6 +313,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 KEY_POST_TITLE,
                 KEY_POST_CONTENT,
                 KEY_POST_USER_ID,
+                KEY_POST_TAG_ID,
                 KEY_POST_CREATED_AT,
                 KEY_POST_UPDATED_AT,
             ),
@@ -341,6 +330,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
                 cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
                 cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
                 cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
                 cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
             )
@@ -409,6 +399,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
                     cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
                     cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
                     cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
                     cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
                 )
