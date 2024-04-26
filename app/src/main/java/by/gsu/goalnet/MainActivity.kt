@@ -3,6 +3,8 @@ package by.gsu.goalnet
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -51,6 +53,8 @@ class MainActivity : AppCompatActivity() {
             recyclerView.adapter = adapter
 
         }
+
+        setupSearchField()
     }
 
     private fun loadUserData(userId: Int) {
@@ -59,7 +63,7 @@ class MainActivity : AppCompatActivity() {
             textViewUsernameM.text = it.username
             val byteArray = it.photo
             Glide.with(this)
-                .load(byteArray ?: R.drawable.default_avatar)
+                .load(byteArray ?: R.drawable.ic_launcher_background)
                 .into(imageNavAvatarM)
 
             textViewUsernameM.setOnClickListener { navigateToProfileActivity(userId) }
@@ -134,4 +138,35 @@ class MainActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+
+    private fun setupSearchField() {
+        val editTextSearch: EditText = findViewById(R.id.editTextSearch)
+        editTextSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val searchText = s.toString()
+                if (searchText.isNotEmpty()) {
+                    val posts = dbHelper.getPostsByTitle(searchText)
+                    updateRecyclerView(posts)
+                } else {
+
+                    val allPosts = dbHelper.getPosts()
+                    updateRecyclerView(allPosts)
+                }
+            }
+        })
+    }
+
+    private fun updateRecyclerView(posts: List<Post>) {
+        val recyclerView: RecyclerView = findViewById(R.id.recyclerViewPosts)
+        val adapter = recyclerView.adapter as ForumAdapter
+        adapter.updatePosts(posts.sortedByDescending {
+            LocalDateTime.parse(it.createdAt, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        })
+        adapter.notifyDataSetChanged()
+    }
+
 }

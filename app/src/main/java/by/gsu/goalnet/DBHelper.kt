@@ -241,6 +241,79 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             null
         }
     }
+    @SuppressLint("Range")
+    fun getPostByTitle(postTitle: String): Post? {
+        val db = this.readableDatabase
+        val cursor: Cursor = db.query(
+            TABLE_POSTS,
+            arrayOf(
+                KEY_POST_ID,
+                KEY_POST_TITLE,
+                KEY_POST_CONTENT,
+                KEY_POST_USER_ID,
+                KEY_POST_CREATED_AT,
+                KEY_POST_UPDATED_AT,
+            ),
+            "$KEY_POST_TITLE=?",
+            arrayOf(postTitle),
+            null,
+            null,
+            null,
+            null
+        )
+        return if (cursor.moveToFirst()) {
+            val post = Post(
+                cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
+                cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
+                cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
+                cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
+                cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+            )
+            cursor.close()
+            post
+        } else {
+            null
+        }
+    }
+
+    fun getPostsByTitle(postTitle: String): List<Post> {
+        val db = this.readableDatabase
+        val posts = mutableListOf<Post>()
+        val cursor: Cursor = db.query(
+            TABLE_POSTS,
+            arrayOf(
+                KEY_POST_ID,
+                KEY_POST_TITLE,
+                KEY_POST_CONTENT,
+                KEY_POST_USER_ID,
+                KEY_POST_CREATED_AT,
+                KEY_POST_UPDATED_AT,
+            ),
+            "$KEY_POST_TITLE LIKE ?",
+            arrayOf("%$postTitle%"),
+            null,
+            null,
+            null,
+            null
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val post = Post(
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+                )
+                posts.add(post)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return posts
+    }
 
     @SuppressLint("Range")
     fun getPostById(postId: Int): Post? {

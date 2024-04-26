@@ -62,22 +62,34 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/createPostLayout"
+    <EditText
+        android:id="@+id/editTextSearch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Search by title"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topNavigationM" />
+
+    <LinearLayout
+        android:id="@+id/createPostLayout"
+        android:layout_width="406dp"
+        android:layout_height="320dp"
+        android:layout_marginTop="50dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/topNavigationM"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/topNavigationM">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/create_post"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_post"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editTextTitle"
@@ -85,34 +97,36 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:hint="@string/title"
-            android:minHeight="48dp" />
+            android:minHeight="40dp" />
 
-            <EditText
-                android:id="@+id/editTextContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/content"
-                android:layout_marginTop="8dp"
-                android:minLines="5"
-                android:gravity="top" />
+        <EditText
+            android:id="@+id/editTextContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="top"
+            android:hint="@string/content"
+            android:minLines="5" />
 
         <Button
             android:id="@+id/buttonPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="260dp"
+            android:layout_marginTop="16dp"
             android:text="@string/post" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPosts"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/createPostLayout"
+        android:layout_marginTop="16dp"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createPostLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
