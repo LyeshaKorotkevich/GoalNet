@@ -75,6 +75,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         private const val KEY_POST_TITLE = "title"
         private const val KEY_POST_CONTENT = "content"
         private const val KEY_POST_USER_ID = "user_id"
+        private const val KEY_POST_TAG_ID = "tag_id"
         private const val KEY_POST_CREATED_AT = "created_at"
         private const val KEY_POST_UPDATED_AT = "updated_at"
 
@@ -88,7 +89,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         private const val TABLE_TAGS = "tags"
         private const val KEY_TAG_ID = "id"
         private const val KEY_TAG_NAME = "name"
-        private const val KEY_POST_TAG_ID = "tag_id"
+        //private const val KEY_POST_TAG_ID = "tag_id"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -104,6 +105,14 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 "$KEY_TAG_NAME TEXT NOT NULL)")
 
         db?.execSQL(CREATE_TAGS_TABLE)
+
+        val initialTags = arrayOf("Champions League", "La Liga", "Bundesliga", "Serie A", "Premier League", "Ligue 1")
+        for (tagName in initialTags) {
+            val tagValues = ContentValues().apply {
+                put(KEY_TAG_NAME, tagName)
+            }
+            db?.insert(TABLE_TAGS, null, tagValues)
+        }
 
         val CREATE_POSTS_TABLE = ("CREATE TABLE $TABLE_POSTS " +
                 "($KEY_POST_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -193,6 +202,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             put(KEY_POST_TITLE, post.title)
             put(KEY_POST_CONTENT, post.content)
             put(KEY_POST_USER_ID, post.userId)
+            put(KEY_POST_TAG_ID, post.tagId)
             put(KEY_POST_CREATED_AT, post.createdAt)
             put(KEY_POST_UPDATED_AT, post.updatedAt)
         }
@@ -478,6 +488,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             put(KEY_POST_TITLE, post.title)
             put(KEY_POST_CONTENT, post.content)
             put(KEY_POST_USER_ID, post.userId)
+            put(KEY_POST_TAG_ID, post.tagId)
             put(KEY_POST_CREATED_AT, post.createdAt)
             put(KEY_POST_UPDATED_AT, post.updatedAt)
         }

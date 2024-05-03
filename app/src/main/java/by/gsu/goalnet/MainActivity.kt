@@ -96,13 +96,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNewPost(userId: Int, title: String, content: String): Boolean {
+    private fun createNewPost(userId: Int, title: String, content: String, TagID: Int): Boolean {
         val newPost = Post(
             title = title,
             content = content,
             userId = userId,
             createdAt = getTimeStamp(),
-            updatedAt = getTimeStamp()
+            updatedAt = getTimeStamp(),
+            tagId = TagID
         )
         val success = dbHelper.addPost(newPost)
         if (success) {
