@@ -42,6 +42,7 @@ class ForumAdapter(private var posts: List<Post>, private val dbHelper: DBHelper
         holder.content.text = currentPost.content
         holder.createdAt.text = currentPost.createdAt
         holder.commentCount.text = dbHelper.getCommentCountForPost(currentPost.id).toString()
+        holder.itemView.findViewById<TextView>(R.id.postTag).text = dbHelper.getTagById(currentPost.tagId)!!.name
 
         val userId = currentPost.userId
         val user = dbHelper.getUserById(userId)

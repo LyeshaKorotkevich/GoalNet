@@ -447,6 +447,30 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         return tagsList
     }
 
+    fun getTagById(tagId: Int): Tag? {
+        val db = this.readableDatabase
+        val cursor = db.query(
+            TABLE_TAGS,
+            arrayOf(KEY_TAG_ID, KEY_TAG_NAME),
+            "$KEY_TAG_ID = ?",
+            arrayOf(tagId.toString()),
+            null,
+            null,
+            null
+        )
+
+        var tag: Tag? = null
+
+        if (cursor.moveToFirst()) {
+            tag = Tag(
+                cursor.getInt(cursor.getColumnIndex(KEY_TAG_ID)),
+                cursor.getString(cursor.getColumnIndex(KEY_TAG_NAME))
+            )
+        }
+
+        cursor.close()
+        return tag
+    }
 
     @SuppressLint("Range")
     fun getCommentsByPostId(postId: Int): List<Comment> {
