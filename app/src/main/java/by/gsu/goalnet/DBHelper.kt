@@ -122,7 +122,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 "$KEY_POST_CREATED_AT TEXT NOT NULL, " +
                 "$KEY_POST_UPDATED_AT TEXT NOT NULL, " +
                 "$KEY_POST_TAG_ID INTEGER NOT NULL, " +
-                "FOREIGN KEY ($KEY_POST_USER_ID) REFERENCES $TABLE_USERS($KEY_ID))" +
+                "FOREIGN KEY ($KEY_POST_USER_ID) REFERENCES $TABLE_USERS($KEY_ID), " +
                 "FOREIGN KEY ($KEY_POST_TAG_ID) REFERENCES $TABLE_TAGS($KEY_TAG_ID))")
 
         db?.execSQL(CREATE_POSTS_TABLE)
@@ -419,6 +419,34 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         cursor.close()
         return postsList
     }
+
+    @SuppressLint("Range")
+    fun getTags(): List<Tag> {
+        val tagsList = mutableListOf<Tag>()
+        val db = this.readableDatabase
+        val cursor: Cursor = db.query(
+            TABLE_TAGS,
+            arrayOf(KEY_TAG_ID, KEY_TAG_NAME),
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val tag = Tag(
+                    cursor.getInt(cursor.getColumnIndex(KEY_TAG_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_TAG_NAME))
+                )
+                tagsList.add(tag)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return tagsList
+    }
+
 
     @SuppressLint("Range")
     fun getCommentsByPostId(postId: Int): List<Comment> {

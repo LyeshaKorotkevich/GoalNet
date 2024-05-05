@@ -5,9 +5,11 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         if (userId != -1) {
             loadUserData(userId)
             setupPostButton(userId)
+            setupTagsSpinner()
 
             val recyclerView: RecyclerView = findViewById(R.id.recyclerViewPosts)
             val posts: List<Post> = dbHelper.getPosts()
@@ -55,6 +58,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupSearchField()
+    }
+
+    private fun setupTagsSpinner() {
+        val spinnerTags: Spinner = findViewById(R.id.spinnerTags)
+        val tagsList = dbHelper.getTags() // Получаем список тегов из базы данных
+        // Получение списка имен тегов из списка тегов типа Tag
+        val tagNamesList = tagsList.map { it.name }
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tagNamesList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerTags.adapter = adapter
     }
 
     private fun loadUserData(userId: Int) {
@@ -80,8 +93,11 @@ class MainActivity : AppCompatActivity() {
             val title = editTextTitle.text.toString()
             val content = editTextContent.text.toString()
 
+            val spinnerTags: Spinner = findViewById(R.id.spinnerTags)
+            val selectedTag = spinnerTags.selectedItem as Tag
+
             if (title.isNotEmpty() && content.isNotEmpty()) {
-                val success = createNewPost(userId, title, content)
+                val success = createNewPost(userId, title, content, selectedTag.id)
                 if (success) {
                     editTextTitle.setText("")
                     editTextContent.setText("")
@@ -165,7 +181,11 @@ class MainActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewPosts)
         val adapter = recyclerView.adapter as ForumAdapter
         adapter.updatePosts(posts.sortedByDescending {
-            LocalDateTime.parse(it.createdAt, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                LocalDateTime.parse(it.createdAt, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            } else {
+                TODO("VERSION.SDK_INT < O")
+            }
         })
         adapter.notifyDataSetChanged()
     }
