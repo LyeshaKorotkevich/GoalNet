@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity() {
             loadUserData(userId)
             setupPostButton(userId)
             setupTagsSpinner()
+            setupTagsSpinner2()
+            setupSearchField()
 
             val recyclerView: RecyclerView = findViewById(R.id.recyclerViewPosts)
             val posts: List<Post> = dbHelper.getPosts()
@@ -68,6 +70,16 @@ class MainActivity : AppCompatActivity() {
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tagNamesList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerTags.adapter = adapter
+    }
+
+    private fun setupTagsSpinner2() {
+        val spinnerTagsSearch: Spinner = findViewById(R.id.spinnerTagsSearch)
+        val tagsList = dbHelper.getTags() // Получаем список тегов из базы данных
+        // Получение списка имен тегов из списка тегов типа Tag
+        val tagNamesList = tagsList.map { it.name }
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tagNamesList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerTagsSearch.adapter = adapter
     }
 
     private fun loadUserData(userId: Int) {
@@ -158,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setupSearchField() {
+/*    private fun setupSearchField() {
         val editTextSearch: EditText = findViewById(R.id.editTextSearch)
         editTextSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -174,6 +186,37 @@ class MainActivity : AppCompatActivity() {
 
                     val allPosts = dbHelper.getPosts()
                     updateRecyclerView(allPosts)
+                }
+            }
+        })
+    }*/
+
+    private fun setupSearchField() {
+        val editTextSearch: EditText = findViewById(R.id.editTextSearch)
+        val spinnerTagsSearch: Spinner = findViewById(R.id.spinnerTagsSearch)
+
+        editTextSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val searchText = s.toString()
+                val selectedTag = spinnerTagsSearch.selectedItem as String // Получаем выбранный тег
+
+                val posts = if (searchText.isNotEmpty() && selectedTag.isNotEmpty()) {
+                    dbHelper.getPostsByTagAndTitle(selectedTag, searchText) // Запрос по тегу и заголовку
+                } else if (searchText.isNotEmpty()) {
+                    dbHelper.getPostsByTitle(searchText) // Запрос только по заголовку
+                } else if (selectedTag.isNotEmpty()) {
+                    //dbHelper.getTagIdByName(selectedTag)?.let { dbHelper.getPostsByTag(it) } // Запрос только по тегу
+                    dbHelper.getPostsByTag(selectedTag) // Запрос только по тегу
+                } else {
+                    dbHelper.getPosts() // Запрос без фильтрации
+                }
+
+                if (posts != null) {
+                    updateRecyclerView(posts)
                 }
             }
         })
