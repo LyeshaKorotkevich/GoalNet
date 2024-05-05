@@ -94,9 +94,11 @@ class MainActivity : AppCompatActivity() {
             val content = editTextContent.text.toString()
 
             val spinnerTags: Spinner = findViewById(R.id.spinnerTags)
-            val selectedTag = spinnerTags.selectedItem as Tag
+            val selectedTagName = spinnerTags.selectedItem as String // Получаем выбранное имя тега
 
-            if (title.isNotEmpty() && content.isNotEmpty()) {
+            val selectedTag = dbHelper.getTags().find { it.name == selectedTagName }
+
+            if (title.isNotEmpty() && content.isNotEmpty() && selectedTag != null) {
                 val success = createNewPost(userId, title, content, selectedTag.id)
                 if (success) {
                     editTextTitle.setText("")
