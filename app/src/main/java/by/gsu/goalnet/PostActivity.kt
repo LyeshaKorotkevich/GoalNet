@@ -67,6 +67,8 @@ class PostActivity : AppCompatActivity() {
             createdAt.text = post.createdAt
             username.text = postUser.username
             commentCount.text = dbHelper.getCommentCountForPost(postId).toString()
+            findViewById<TextView>(R.id.postTag).text = dbHelper.getTagById(post.tagId)!!.name
+
 
             val byteArray = postUser.photo
             Glide.with(this)

@@ -272,427 +272,344 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         }
     }
 
-    /*@SuppressLint("Range")
-    fun getPostsByTag(tagId: Int): List<Post> {
-        val postsList = mutableListOf<Post>()
+    @SuppressLint("Range")
+    fun getPostsByTitle(postTitle: String): List<Post> {
         val db = this.readableDatabase
-        val query = "SELECT * FROM $TABLE_POSTS WHERE $KEY_POST_TAG_ID = ?"
-        val selectionArgs = arrayOf(tagId.toString())
-        val cursor = db.rawQuery(query, selectionArgs)
+        val posts = mutableListOf<Post>()
+        val cursor: Cursor = db.query(
+            TABLE_POSTS,
+            arrayOf(
+                KEY_POST_ID,
+                KEY_POST_TITLE,
+                KEY_POST_CONTENT,
+                KEY_POST_USER_ID,
+                KEY_POST_TAG_ID,
+                KEY_POST_CREATED_AT,
+                KEY_POST_UPDATED_AT,
+            ),
+            "$KEY_POST_TITLE LIKE ?",
+            arrayOf("%$postTitle%"),
+            null,
+            null,
+            null,
+            null
+        )
 
         if (cursor.moveToFirst()) {
             do {
                 val post = Post(
-                    id = cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
-                    title = cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
-                    content = cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
-                    userId = cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
-                    tagId = cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
-                    createdAt = cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
-                    updatedAt = cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+                )
+                posts.add(post)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return posts
+    }
+
+    @SuppressLint("Range")
+    fun getPostById(postId: Int): Post? {
+        val db = this.readableDatabase
+        val cursor: Cursor = db.query(
+            TABLE_POSTS,
+            arrayOf(
+                KEY_POST_ID,
+                KEY_POST_TITLE,
+                KEY_POST_CONTENT,
+                KEY_POST_USER_ID,
+                KEY_POST_TAG_ID,
+                KEY_POST_CREATED_AT,
+                KEY_POST_UPDATED_AT,
+            ),
+            "$KEY_POST_ID=?",
+            arrayOf(postId.toString()),
+            null,
+            null,
+            null,
+            null
+        )
+        return if (cursor.moveToFirst()) {
+            val post = Post(
+                cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
+                cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
+                cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
+                cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
+                cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
+                cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+            )
+            cursor.close()
+            post
+        } else {
+            null
+        }
+    }
+
+
+    @SuppressLint("Range")
+    fun getUserByUsername(username: String): User? {
+        val db = this.readableDatabase
+        val cursor: Cursor = db.query(
+            TABLE_USERS,
+            arrayOf(
+                KEY_ID,
+                KEY_USERNAME,
+                KEY_PASSWORD,
+                KEY_INFO,
+                KEY_BIRTHDAY,
+                KEY_COUNTRY,
+                KEY_CITY,
+                KEY_CLUB,
+                KEY_PLAYER,
+                KEY_PHOTO
+            ),
+            "$KEY_USERNAME=?",
+            arrayOf(username),
+            null,
+            null,
+            null,
+            null
+        )
+        return if (cursor.moveToFirst()) {
+            val user = User(
+                cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+                cursor.getString(cursor.getColumnIndex(KEY_USERNAME)),
+                cursor.getString(cursor.getColumnIndex(KEY_PASSWORD)),
+                cursor.getString(cursor.getColumnIndex(KEY_INFO)),
+                cursor.getString(cursor.getColumnIndex(KEY_BIRTHDAY)),
+                cursor.getString(cursor.getColumnIndex(KEY_COUNTRY)),
+                cursor.getString(cursor.getColumnIndex(KEY_CITY)),
+                cursor.getString(cursor.getColumnIndex(KEY_CLUB)),
+                cursor.getString(cursor.getColumnIndex(KEY_PLAYER)),
+                cursor.getBlob(cursor.getColumnIndex(KEY_PHOTO))
+            )
+            cursor.close()
+            user
+        } else {
+            null
+        }
+    }
+
+    @SuppressLint("Range")
+    fun getPosts(): List<Post> {
+        val postsList = mutableListOf<Post>()
+        val db = this.readableDatabase
+        val cursor: Cursor = db.rawQuery("SELECT * FROM $TABLE_POSTS", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val post = Post(
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
+                    cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
                 )
                 postsList.add(post)
             } while (cursor.moveToNext())
         }
         cursor.close()
         return postsList
-    }*/
+    }
 
-@SuppressLint("Range")
-fun getTagById(tagId: Int): Tag? {
-val tagsList = mutableListOf<Tag>()
-val db = this.readableDatabase
-val cursor: Cursor = db.query(
-    TABLE_TAGS,
-    arrayOf(KEY_TAG_ID, KEY_TAG_NAME),
-    null,
-    null,
-    null,
-    null,
-    null
-)
-
-if (cursor.moveToFirst()) {
-    do {
-        val tag = Tag(
-            cursor.getInt(cursor.getColumnIndex(KEY_TAG_ID)),
-            cursor.getString(cursor.getColumnIndex(KEY_TAG_NAME))
+    @SuppressLint("Range")
+    fun getTags(): List<Tag> {
+        val tagsList = mutableListOf<Tag>()
+        val db = this.readableDatabase
+        val cursor: Cursor = db.query(
+            TABLE_TAGS,
+            arrayOf(KEY_TAG_ID, KEY_TAG_NAME),
+            null,
+            null,
+            null,
+            null,
+            null
         )
-        tagsList.add(tag)
-    } while (cursor.moveToNext())
-}
-cursor.close()
-// Например:
-return tagsList.find { it.id == tagId }
-}
 
-fun getPostsByTag(selectedTag: String): List<Post> {
-return getPosts().filter { post ->
-    val postTag = getTagById(post.tagId)
-    postTag?.name == selectedTag
-}
-}
+        if (cursor.moveToFirst()) {
+            do {
+                val tag = Tag(
+                    cursor.getInt(cursor.getColumnIndex(KEY_TAG_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_TAG_NAME))
+                )
+                tagsList.add(tag)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return tagsList
+    }
 
-@SuppressLint("Range")
-fun getTagIdByName(tagName: String): Int? {
-val db = this.readableDatabase
-val query = "SELECT $KEY_TAG_ID FROM $TABLE_TAGS WHERE $KEY_TAG_NAME = ?"
-val selectionArgs = arrayOf(tagName)
-val cursor = db.rawQuery(query, selectionArgs)
-var tagId: Int? = null
 
-if (cursor.moveToFirst()) {
-    tagId = cursor.getInt(cursor.getColumnIndex(KEY_TAG_ID))
-}
-cursor.close()
-return tagId
-}
-
-@SuppressLint("Range")
-fun getPostsByTitle(postTitle: String): List<Post> {
-val db = this.readableDatabase
-val posts = mutableListOf<Post>()
-val cursor: Cursor = db.query(
-    TABLE_POSTS,
-    arrayOf(
-        KEY_POST_ID,
-        KEY_POST_TITLE,
-        KEY_POST_CONTENT,
-        KEY_POST_USER_ID,
-        KEY_POST_TAG_ID,
-        KEY_POST_CREATED_AT,
-        KEY_POST_UPDATED_AT,
-    ),
-    "$KEY_POST_TITLE LIKE ?",
-    arrayOf("%$postTitle%"),
-    null,
-    null,
-    null,
-    null
-)
-
-if (cursor.moveToFirst()) {
-    do {
-        val post = Post(
-            cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
-            cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
-            cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
-            cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
-            cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
-            cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
-            cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+    @SuppressLint("Range")
+    fun getCommentsByPostId(postId: Int): List<Comment> {
+        val commentsList = mutableListOf<Comment>()
+        val db = this.readableDatabase
+        val cursor: Cursor = db.query(
+            TABLE_COMMENTS,
+            arrayOf(
+                KEY_COMMENT_ID,
+                KEY_COMMENT_CONTENT,
+                KEY_COMMENT_POST_ID,
+                KEY_COMMENT_USER_ID,
+                KEY_COMMENT_CREATED_AT
+            ),
+            "$KEY_COMMENT_POST_ID=?",
+            arrayOf(postId.toString()),
+            null,
+            null,
+            null,
+            null
         )
-        posts.add(post)
-    } while (cursor.moveToNext())
-}
-cursor.close()
-return posts
-}
 
-fun getPostsByTagAndTitle(selectedTag: String, title: String): List<Post> {
-val postsByTag = getPostsByTag(selectedTag)
-return postsByTag.filter { post ->
-    post.title.contains(title, ignoreCase = true)
-}
-}
+        if (cursor.moveToFirst()) {
+            do {
+                val comment = Comment(
+                    cursor.getInt(cursor.getColumnIndex(KEY_COMMENT_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_COMMENT_CONTENT)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_COMMENT_POST_ID)),
+                    cursor.getInt(cursor.getColumnIndex(KEY_COMMENT_USER_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_COMMENT_CREATED_AT))
+                )
+                commentsList.add(comment)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return commentsList
+    }
 
-@SuppressLint("Range")
-fun getPostById(postId: Int): Post? {
-val db = this.readableDatabase
-val cursor: Cursor = db.query(
-    TABLE_POSTS,
-    arrayOf(
-        KEY_POST_ID,
-        KEY_POST_TITLE,
-        KEY_POST_CONTENT,
-        KEY_POST_USER_ID,
-        KEY_POST_TAG_ID,
-        KEY_POST_CREATED_AT,
-        KEY_POST_UPDATED_AT,
-    ),
-    "$KEY_POST_ID=?",
-    arrayOf(postId.toString()),
-    null,
-    null,
-    null,
-    null
-)
-return if (cursor.moveToFirst()) {
-    val post = Post(
-        cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
-        cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
-        cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
-        cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
-        cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
-        cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
-        cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
-    )
-    cursor.close()
-    post
-} else {
-    null
-}
-}
+    fun updateUser(user: User): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.apply {
+            put(KEY_USERNAME, user.username)
+            put(KEY_PASSWORD, user.password)
+            put(KEY_INFO, user.info)
+            put(KEY_BIRTHDAY, user.birthday)
+            put(KEY_COUNTRY, user.country)
+            put(KEY_CITY, user.city)
+            put(KEY_CLUB, user.club)
+            put(KEY_PLAYER, user.player)
+            put(KEY_PHOTO, user.photo)
+        }
+
+        val success = db.update(
+            TABLE_USERS,
+            values,
+            "$KEY_ID = ?",
+            arrayOf(user.id.toString())
+        ) > 0
+        db.close()
+        return success
+    }
+
+    fun updatePost(post: Post): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put(KEY_POST_TITLE, post.title)
+            put(KEY_POST_CONTENT, post.content)
+            put(KEY_POST_USER_ID, post.userId)
+            put(KEY_POST_TAG_ID, post.tagId)
+            put(KEY_POST_CREATED_AT, post.createdAt)
+            put(KEY_POST_UPDATED_AT, post.updatedAt)
+        }
+
+        val success = db.update(
+            TABLE_POSTS,
+            values,
+            "$KEY_POST_ID = ?",
+            arrayOf(post.id.toString())
+        ) > 0
+        db.close()
+        return success
+    }
 
 
-@SuppressLint("Range")
-fun getUserByUsername(username: String): User? {
-val db = this.readableDatabase
-val cursor: Cursor = db.query(
-    TABLE_USERS,
-    arrayOf(
-        KEY_ID,
-        KEY_USERNAME,
-        KEY_PASSWORD,
-        KEY_INFO,
-        KEY_BIRTHDAY,
-        KEY_COUNTRY,
-        KEY_CITY,
-        KEY_CLUB,
-        KEY_PLAYER,
-        KEY_PHOTO
-    ),
-    "$KEY_USERNAME=?",
-    arrayOf(username),
-    null,
-    null,
-    null,
-    null
-)
-return if (cursor.moveToFirst()) {
-    val user = User(
-        cursor.getInt(cursor.getColumnIndex(KEY_ID)),
-        cursor.getString(cursor.getColumnIndex(KEY_USERNAME)),
-        cursor.getString(cursor.getColumnIndex(KEY_PASSWORD)),
-        cursor.getString(cursor.getColumnIndex(KEY_INFO)),
-        cursor.getString(cursor.getColumnIndex(KEY_BIRTHDAY)),
-        cursor.getString(cursor.getColumnIndex(KEY_COUNTRY)),
-        cursor.getString(cursor.getColumnIndex(KEY_CITY)),
-        cursor.getString(cursor.getColumnIndex(KEY_CLUB)),
-        cursor.getString(cursor.getColumnIndex(KEY_PLAYER)),
-        cursor.getBlob(cursor.getColumnIndex(KEY_PHOTO))
-    )
-    cursor.close()
-    user
-} else {
-    null
-}
-}
+    fun checkUser(username: String, password: String): Boolean {
+        val db = this.readableDatabase
+        val selection = "$KEY_USERNAME = ? AND $KEY_PASSWORD = ?"
+        val selectionArgs = arrayOf(username, password)
 
-@SuppressLint("Range")
-fun getPosts(): List<Post> {
-val postsList = mutableListOf<Post>()
-val db = this.readableDatabase
-val cursor: Cursor = db.rawQuery("SELECT * FROM $TABLE_POSTS", null)
-
-if (cursor.moveToFirst()) {
-    do {
-        val post = Post(
-            cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
-            cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
-            cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
-            cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
-            cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
-            cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
-            cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+        val cursor = db.query(
+            TABLE_USERS,
+            arrayOf(KEY_ID),
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
         )
-        postsList.add(post)
-    } while (cursor.moveToNext())
-}
-cursor.close()
-return postsList
-}
 
-@SuppressLint("Range")
-fun getTags(): List<Tag> {
-val tagsList = mutableListOf<Tag>()
-val db = this.readableDatabase
-val cursor: Cursor = db.query(
-    TABLE_TAGS,
-    arrayOf(KEY_TAG_ID, KEY_TAG_NAME),
-    null,
-    null,
-    null,
-    null,
-    null
-)
+        val userExists = cursor.count > 0
+        cursor.close()
+        return userExists
+    }
 
-if (cursor.moveToFirst()) {
-    do {
-        val tag = Tag(
-            cursor.getInt(cursor.getColumnIndex(KEY_TAG_ID)),
-            cursor.getString(cursor.getColumnIndex(KEY_TAG_NAME))
+    fun checkUserExists(username: String): Boolean {
+        val db = this.readableDatabase
+        val selection = "$KEY_USERNAME = ?"
+        val selectionArgs = arrayOf(username)
+
+        val cursor = db.query(
+            TABLE_USERS,
+            arrayOf(KEY_ID),
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
         )
-        tagsList.add(tag)
-    } while (cursor.moveToNext())
-}
-cursor.close()
-return tagsList
-}
 
+        val userExists = cursor.count > 0
+        cursor.close()
+        return userExists
+    }
 
-@SuppressLint("Range")
-fun getCommentsByPostId(postId: Int): List<Comment> {
-val commentsList = mutableListOf<Comment>()
-val db = this.readableDatabase
-val cursor: Cursor = db.query(
-    TABLE_COMMENTS,
-    arrayOf(
-        KEY_COMMENT_ID,
-        KEY_COMMENT_CONTENT,
-        KEY_COMMENT_POST_ID,
-        KEY_COMMENT_USER_ID,
-        KEY_COMMENT_CREATED_AT
-    ),
-    "$KEY_COMMENT_POST_ID=?",
-    arrayOf(postId.toString()),
-    null,
-    null,
-    null,
-    null
-)
+    fun deletePost(postId: Int): Boolean {
+        val db = this.writableDatabase
+        val success = db.delete(TABLE_POSTS, "$KEY_POST_ID=?", arrayOf(postId.toString())) > 0
+        db.close()
+        return success
+    }
 
-if (cursor.moveToFirst()) {
-    do {
-        val comment = Comment(
-            cursor.getInt(cursor.getColumnIndex(KEY_COMMENT_ID)),
-            cursor.getString(cursor.getColumnIndex(KEY_COMMENT_CONTENT)),
-            cursor.getInt(cursor.getColumnIndex(KEY_COMMENT_POST_ID)),
-            cursor.getInt(cursor.getColumnIndex(KEY_COMMENT_USER_ID)),
-            cursor.getString(cursor.getColumnIndex(KEY_COMMENT_CREATED_AT))
+    fun getCommentCountForPost(postId: Int): Int {
+        val db = this.readableDatabase
+        val selection = "$KEY_COMMENT_POST_ID = ?"
+        val selectionArgs = arrayOf(postId.toString())
+
+        val cursor = db.query(
+            TABLE_COMMENTS,
+            arrayOf(KEY_COMMENT_ID),
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
         )
-        commentsList.add(comment)
-    } while (cursor.moveToNext())
-}
-cursor.close()
-return commentsList
-}
 
-fun updateUser(user: User): Boolean {
-val db = this.writableDatabase
-val values = ContentValues()
-values.apply {
-    put(KEY_USERNAME, user.username)
-    put(KEY_PASSWORD, user.password)
-    put(KEY_INFO, user.info)
-    put(KEY_BIRTHDAY, user.birthday)
-    put(KEY_COUNTRY, user.country)
-    put(KEY_CITY, user.city)
-    put(KEY_CLUB, user.club)
-    put(KEY_PLAYER, user.player)
-    put(KEY_PHOTO, user.photo)
-}
-
-val success = db.update(
-    TABLE_USERS,
-    values,
-    "$KEY_ID = ?",
-    arrayOf(user.id.toString())
-) > 0
-db.close()
-return success
-}
-
-fun updatePost(post: Post): Boolean {
-val db = this.writableDatabase
-val values = ContentValues().apply {
-    put(KEY_POST_TITLE, post.title)
-    put(KEY_POST_CONTENT, post.content)
-    put(KEY_POST_USER_ID, post.userId)
-    put(KEY_POST_TAG_ID, post.tagId)
-    put(KEY_POST_CREATED_AT, post.createdAt)
-    put(KEY_POST_UPDATED_AT, post.updatedAt)
-}
-
-val success = db.update(
-    TABLE_POSTS,
-    values,
-    "$KEY_POST_ID = ?",
-    arrayOf(post.id.toString())
-) > 0
-db.close()
-return success
-}
+        val commentCount = cursor.count
+        cursor.close()
+        return commentCount
+    }
 
 
-fun checkUser(username: String, password: String): Boolean {
-val db = this.readableDatabase
-val selection = "$KEY_USERNAME = ? AND $KEY_PASSWORD = ?"
-val selectionArgs = arrayOf(username, password)
+    fun assignDefaultRoleToUser(userId: Int, roleId: Int): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.apply {
+            put(KEY_USER_ROLES_USER_ID, userId)
+            put(KEY_USER_ROLES_ROLE_ID, roleId)
+        }
 
-val cursor = db.query(
-    TABLE_USERS,
-    arrayOf(KEY_ID),
-    selection,
-    selectionArgs,
-    null,
-    null,
-    null
-)
-
-val userExists = cursor.count > 0
-cursor.close()
-return userExists
-}
-
-fun checkUserExists(username: String): Boolean {
-val db = this.readableDatabase
-val selection = "$KEY_USERNAME = ?"
-val selectionArgs = arrayOf(username)
-
-val cursor = db.query(
-    TABLE_USERS,
-    arrayOf(KEY_ID),
-    selection,
-    selectionArgs,
-    null,
-    null,
-    null
-)
-
-val userExists = cursor.count > 0
-cursor.close()
-return userExists
-}
-
-fun deletePost(postId: Int): Boolean {
-val db = this.writableDatabase
-val success = db.delete(TABLE_POSTS, "$KEY_POST_ID=?", arrayOf(postId.toString())) > 0
-db.close()
-return success
-}
-
-fun getCommentCountForPost(postId: Int): Int {
-val db = this.readableDatabase
-val selection = "$KEY_COMMENT_POST_ID = ?"
-val selectionArgs = arrayOf(postId.toString())
-
-val cursor = db.query(
-    TABLE_COMMENTS,
-    arrayOf(KEY_COMMENT_ID),
-    selection,
-    selectionArgs,
-    null,
-    null,
-    null
-)
-
-val commentCount = cursor.count
-cursor.close()
-return commentCount
-}
-
-
-fun assignDefaultRoleToUser(userId: Int, roleId: Int): Boolean {
-val db = this.writableDatabase
-val values = ContentValues()
-values.apply {
-    put(KEY_USER_ROLES_USER_ID, userId)
-    put(KEY_USER_ROLES_ROLE_ID, roleId)
-}
-
-val success = db.insert(TABLE_USER_ROLES, null, values) != -1L
-db.close()
-return success
-}
+        val success = db.insert(TABLE_USER_ROLES, null, values) != -1L
+        db.close()
+        return success
+    }
 }
