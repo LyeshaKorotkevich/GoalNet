@@ -447,6 +447,100 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         return tagsList
     }
 
+    /*@SuppressLint("Range")
+    fun getPostsByTag(tagId: Int): List<Post> {
+        val postsList = mutableListOf<Post>()
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_POSTS WHERE $KEY_POST_TAG_ID = ?"
+        val selectionArgs = arrayOf(tagId.toString())
+        val cursor = db.rawQuery(query, selectionArgs)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val post = Post(
+                    id = cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
+                    title = cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
+                    content = cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
+                    userId = cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                    tagId = cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
+                    createdAt = cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
+                    updatedAt = cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+                )
+                postsList.add(post)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return postsList
+    }*/
+
+    @SuppressLint("Range")
+    fun getPostsByTag(tagName: String): List<Post> {
+        val tagId = getTagIdByName(tagName)
+        val postsList = mutableListOf<Post>()
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_POSTS WHERE $KEY_POST_TAG_ID = ?"
+        val selectionArgs = arrayOf(tagId.toString())
+        val cursor = db.rawQuery(query, selectionArgs)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val post = Post(
+                    id = cursor.getInt(cursor.getColumnIndex(KEY_POST_ID)),
+                    title = cursor.getString(cursor.getColumnIndex(KEY_POST_TITLE)),
+                    content = cursor.getString(cursor.getColumnIndex(KEY_POST_CONTENT)),
+                    userId = cursor.getInt(cursor.getColumnIndex(KEY_POST_USER_ID)),
+                    tagId = cursor.getInt(cursor.getColumnIndex(KEY_POST_TAG_ID)),
+                    createdAt = cursor.getString(cursor.getColumnIndex(KEY_POST_CREATED_AT)),
+                    updatedAt = cursor.getString(cursor.getColumnIndex(KEY_POST_UPDATED_AT))
+                )
+                postsList.add(post)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return postsList
+    }
+
+    @SuppressLint("Range")
+    fun getTagById(tagId: Int): Tag? {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_TAGS WHERE $KEY_TAG_ID = ?"
+        val selectionArgs = arrayOf(tagId.toString())
+        val cursor = db.rawQuery(query, selectionArgs)
+
+        var tag: Tag? = null
+        if (cursor.moveToFirst()) {
+            tag = Tag(
+                id = cursor.getInt(cursor.getColumnIndex(KEY_TAG_ID)),
+                name = cursor.getString(cursor.getColumnIndex(KEY_TAG_NAME))
+            )
+        }
+        cursor.close()
+        return tag
+    }
+
+    fun getPostsByTagAndTitle(selectedTag: String, title: String): List<Post> {
+        val postsByTag = getPostsByTag(selectedTag)
+        return postsByTag.filter { post ->
+            post.title.contains(title, ignoreCase = true)
+        }
+    }
+
+    @SuppressLint("Range")
+    fun getTagIdByName(tagName: String): Int? {
+        val db = this.readableDatabase
+        val query = "SELECT $KEY_TAG_ID FROM $TABLE_TAGS WHERE $KEY_TAG_NAME = ?"
+        val selectionArgs = arrayOf(tagName)
+        val cursor = db.rawQuery(query, selectionArgs)
+        var tagId: Int? = null
+
+        if (cursor.moveToFirst()) {
+            tagId = cursor.getInt(cursor.getColumnIndex(KEY_TAG_ID))
+        }
+        cursor.close()
+        return tagId
+    }
+
+
 
     @SuppressLint("Range")
     fun getCommentsByPostId(postId: Int): List<Comment> {
